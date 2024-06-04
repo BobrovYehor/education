@@ -120,7 +120,7 @@ const dishes = [
     },
     
     {
-        id: '15',
+        id: '51',
         category_id: '3',
         title: 'Spinach Salad',
         weight: '270g',
@@ -220,22 +220,6 @@ const dishes = [
         title: 'Beef Stroganoff',
         weight: '350g',
         price: 19.99,
-    },
-    
-    {
-        id: '28',
-        category_id: '5',
-        title: 'Eggplant Parmesan',
-        weight: '300g',
-        price: 16.99,
-    },
-    
-    {
-        id: '29',
-        category_id: '5',
-        title: 'Teriyaki Chicken',
-        weight: '300g',
-        price: 17.99,
     },
     
     {
