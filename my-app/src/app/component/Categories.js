@@ -1,14 +1,9 @@
-import { useState } from 'react';
-import categories from '../../../services/categories';
-
 const backgroundColors = ['bg-[#80ADD7]', 'bg-[#0ABDA0]', 'bg-[#EBF2EA]', 'bg-[#D4DCA9]', 'bg-[#BF9D7A]', 'bg-[#F3D4A0]', 'bg-[#D8D583]'];
 
-const Categories = ({ activeCategory, setActiveCategory }) => {
-    const [activeBorder, setActiveBorder] = useState(null);
+const Categories = ({ categories, activeCategory, setActiveCategory }) => {
 
-    const handleCategoryClick = (categoryId) => {
-        setActiveCategory(categoryId === activeCategory ? null : categoryId);
-        setActiveBorder(categoryId);
+    const handleCategoryClick = (category) => {
+        setActiveCategory(category === activeCategory ? null : category); 
     };
 
     return (
@@ -17,8 +12,8 @@ const Categories = ({ activeCategory, setActiveCategory }) => {
                 {categories.map((category, index) => (
                     <li 
                         key={category.id} 
-                        className={`flex justify-center items-center text-xl h-36 cursor-pointer border-2 ${backgroundColors[index % backgroundColors.length]} ${activeBorder === category.id ? 'border-black' : ''}`}
-                        onClick={() => handleCategoryClick(category.id)}
+                        className={`flex justify-center items-center text-xl h-36 cursor-pointer border-2 ${backgroundColors[index % backgroundColors.length]} ${activeCategory === category ? 'border-black' : 'border-transparent'}`}
+                        onClick={() => handleCategoryClick(category)}
                     >
                         {category.title}
                     </li>
