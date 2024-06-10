@@ -9,6 +9,7 @@ import categories from "../../services/categories";
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState(null);
   const [filteredDishes, setFilteredDishes] = useState([]);
+  const [order, setOrder] = useState([]);
 
   useEffect(() => {
     if(activeCategory) {
@@ -18,12 +19,28 @@ export default function Home() {
         setFilteredDishes([]);
     }
   }, [activeCategory]);
+
+  const addDishToOrder = (dish) => {
+    setOrder(prevOrder => {
+        const existingDish = prevOrder.find(item => item.id === dish.id);
+        if (existingDish) {
+            return prevOrder.map(item => 
+                item.id === dish.id 
+                ? { ...item, quantity: item.quantity + 1 } 
+                : item
+            );
+        } else {
+            return [...prevOrder, { ...dish, quantity: 1 }];
+        }
+    });
+  };
+
     return (
       
       <main className="p-0 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ms:p-4 md:p-8">
           <Categories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
-          <Dishes filteredDishes={filteredDishes} />
-          <Order />
+          <Dishes filteredDishes={filteredDishes} addDishToOrder={addDishToOrder}/>
+          <Order order={order} setOrder={setOrder}/>
       </main>
     );
 }
