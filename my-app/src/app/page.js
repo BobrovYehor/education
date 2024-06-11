@@ -12,6 +12,9 @@ export default function Home() {
   const [order, setOrder] = useState([]);
 
   useEffect(() => {
+    console.log(order);
+  }, [order])
+  useEffect(() => {
     if(activeCategory) {
       const filtered = dishes.filter(dish => dish.category_id === activeCategory.id);
       setFilteredDishes(filtered);  
