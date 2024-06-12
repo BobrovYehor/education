@@ -1,4 +1,4 @@
-const OrderLine = ({ dish, increaseQuantity, decreaseQuantity, index }) => {
+const OrderLine = ({ dish, increaseQuantity, decreaseQuantity, removeDish, index }) => {
     const backgroundColor = index % 2 === 0 ? 'bg-white' : 'bg-gray-100';
     
     return (
@@ -10,8 +10,9 @@ const OrderLine = ({ dish, increaseQuantity, decreaseQuantity, index }) => {
                 <button onClick={() => increaseQuantity(dish.id)} className="px-2">+</button>
             </div>
             <div className="flex-1 text-center">${dish.price}</div>
-            <div className="flex-1 text-right">${(dish.price * dish.quantity).toFixed(2)}</div>
-        </div>
+            <div className="flex-1 text-center">${(dish.price * dish.quantity).toFixed(2)}</div>
+            <button onClick={() => removeDish(dish.id)} className="px-2 bg-red-500 text-white rounded">x</button>
+        </div> 
     )
 }
 
