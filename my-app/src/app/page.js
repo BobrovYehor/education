@@ -43,7 +43,7 @@ export default function Home() {
       <main className="p-0 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 ms:p-4 md:p-8">
           <Categories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
           <Dishes filteredDishes={filteredDishes} addDishToOrder={addDishToOrder}/>
-          <Order order={order} setOrder={setOrder}/>
+          <Order order={order} setOrder={setOrder} categories={categories}/>
       </main>
     );
 }

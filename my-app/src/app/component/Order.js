@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import OrderLine from "./OrderLine";
+import OrderSummary from "./OrderSummary";
 
-const Order = ({ order, setOrder }) => {
+const Order = ({ order, setOrder, categories }) => {
     const [orderNumber, setOrderNumber] = useState(1);
     const [orderDate, setOrderDate] = useState('');
 
@@ -16,10 +17,6 @@ const Order = ({ order, setOrder }) => {
         alert(`Order ${orderNumber} has been submitted!`);
     };
 
-    const calculateTotal = () => {
-        return order.reduce((total, dish) => total + dish.price * dish.quantity, 0);
-    };
-
     const increaseQuantity = (dishId) => {
         setOrder(prevOrder => 
             prevOrder.map(dish => 
@@ -29,11 +26,15 @@ const Order = ({ order, setOrder }) => {
     };
 
     const decreaseQuantity = (dishId) => {
-        setOrder(prevOrder => 
-            prevOrder.map(dish => 
-                dish.id === dishId && dish.quantity > 1 ? { ...dish, quantity: dish.quantity - 1 } : dish
-            )
-        );
+        setOrder(prevOrder => {
+            const updatedOrder = prevOrder.map(dish => 
+                dish.id === dishId && dish.quantity > 1 
+                    ? { ...dish, quantity: dish.quantity - 1 } 
+                    : dish
+            );
+            const isOrderChanged = prevOrder.some((dish, index) => dish !== updatedOrder[index]);
+            return isOrderChanged ? updatedOrder : prevOrder;
+        });
     };
 
     const removeDish = (dishId) => {
@@ -59,9 +60,7 @@ const Order = ({ order, setOrder }) => {
                             index={index}
                         />
                     ))}
-                    <div className="mt-4 text-xl text-right">
-                        <strong>Total: ${calculateTotal().toFixed(2)}</strong>
-                    </div>
+                    <OrderSummary order={order} categories={categories} />
                     <div className="mt-4 text-right">
                         <button 
                             onClick={handleOrderSubmit}
