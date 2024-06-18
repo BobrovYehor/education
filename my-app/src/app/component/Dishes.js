@@ -1,6 +1,8 @@
+import { memo } from 'react';
+
 const Dishes = ({ filteredDishes, addDishToOrder }) => {
     return (
-        <section className='h-full w-full min-w-96 bg-fuchsia-300 p-8'>
+        <section className='flex-1 min-w-80 sm:min-w-96 bg-fuchsia-300 p-4 md:p-8'>
             {filteredDishes.length > 0 ? (
                 <ul className='grid grid-cols-2 grid-rows-4 h-full gap-3 text-center'>
                     {filteredDishes.map((dish) => (
@@ -19,4 +21,4 @@ const Dishes = ({ filteredDishes, addDishToOrder }) => {
     );
 }
 
-export default Dishes;
+export default memo(Dishes);

@@ -1,7 +1,9 @@
+import { memo, useMemo } from 'react';
+
 const OrderSummary = ({ order, categories }) => {
-    const calculateTotal = () => {
+    const calculateTotal = useMemo(() => {
         return order.reduce((total, dish) => total + dish.price * dish.quantity, 0);
-    };
+    }, [order]);
 
     const calculateCategoryTotal = () => {
         return categories.map(category => {
@@ -23,10 +25,10 @@ const OrderSummary = ({ order, categories }) => {
                 ))}
             </ul>
             <div className="mt-4 text-xl text-center">
-                <strong>Total Order: ${calculateTotal().toFixed(2)}</strong>
+                <strong>Total Order: ${calculateTotal.toFixed(2)}</strong>
             </div>
         </div>
     );
 } 
 
-export default OrderSummary;
+export default memo(OrderSummary);

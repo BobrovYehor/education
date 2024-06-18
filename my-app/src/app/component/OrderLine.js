@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import DishQuantity from './DishQuantity';
 
 const OrderLine = ({ dish, increaseQuantity, decreaseQuantity, removeDish, index }) => {
@@ -18,4 +20,4 @@ const OrderLine = ({ dish, increaseQuantity, decreaseQuantity, removeDish, index
     );
 };
 
-export default OrderLine;
+export default memo(OrderLine);

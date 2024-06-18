@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 const backgroundColors = ['bg-[#80ADD7]', 'bg-[#0ABDA0]', 'bg-[#EBF2EA]', 'bg-[#D4DCA9]', 'bg-[#BF9D7A]', 'bg-[#F3D4A0]', 'bg-[#D8D583]'];
 
 const Categories = ({ categories, activeCategory, setActiveCategory }) => {
@@ -7,7 +9,7 @@ const Categories = ({ categories, activeCategory, setActiveCategory }) => {
     };
 
     return (
-        <section className='h-full w-full min-w-96 bg-pink-50 p-8'>
+        <section className=' flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8'>
             <ul className='grid grid-cols-2 h-full gap-3'>
                 {categories.map((category, index) => (
                     <li 
@@ -23,4 +25,4 @@ const Categories = ({ categories, activeCategory, setActiveCategory }) => {
     );
 }
 
-export default Categories;
+export default memo(Categories);

@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 const DishQuantity = ({ dish, increaseQuantity, decreaseQuantity }) => {
     return (
         <div className="flex items-center">
@@ -8,4 +10,4 @@ const DishQuantity = ({ dish, increaseQuantity, decreaseQuantity }) => {
     );
 };
 
-export default DishQuantity;
+export default memo(DishQuantity);

@@ -39,10 +39,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex-grow flex h-full">
+    <main className="flex-grow flex-wrap flex md:overflow-auto p-0 ms:p-4 md:p-8">
         <Categories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
         <Dishes filteredDishes={filteredDishes} addDishToOrder={addDishToOrder}/>
         <Order order={order} setOrder={setOrder} categories={categories}/>
-    </div>
+    </main>
   );
 }

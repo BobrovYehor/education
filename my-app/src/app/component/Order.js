@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import OrderLine from "./OrderLine";
 import OrderSummary from "./OrderSummary";
 
@@ -42,15 +42,15 @@ const Order = ({ order, setOrder, categories }) => {
     };
 
     return (
-        <section className='h-full w-full min-w-96 bg-pink-50 p-8 flex flex-col'>
+        <section className='md:h-full flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8 flex flex-col '>
             <h1 className="text-2xl text-center"><strong>Order</strong></h1>
             {order.length > 0 ? (
-                <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="flex flex-col overflow-hidden">
                     <div className="mb-4 text-lg text-right">
                         <div><strong>Order Number:</strong> {orderNumber}</div>
                         {orderDate && <div><strong>Order Date:</strong> {orderDate}</div>}
                     </div>
-                    <div className="flex-1 overflow-y-auto">
+                    <div className="overflow-y-auto">
                         {order.map((dish, index) => (
                             <OrderLine 
                                 key={dish.id} 
@@ -78,4 +78,4 @@ const Order = ({ order, setOrder, categories }) => {
     )
 }
 
-export default Order;
+export default memo(Order);
