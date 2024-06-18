@@ -1,6 +1,6 @@
 const Dishes = ({ filteredDishes, addDishToOrder }) => {
     return (
-        <section className='h-full min-w-96 bg-fuchsia-300 p-8'>
+        <section className='h-full w-full min-w-96 bg-fuchsia-300 p-8'>
             {filteredDishes.length > 0 ? (
                 <ul className='grid grid-cols-2 grid-rows-4 h-full gap-3 text-center'>
                     {filteredDishes.map((dish) => (

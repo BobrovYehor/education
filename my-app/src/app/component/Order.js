@@ -42,24 +42,26 @@ const Order = ({ order, setOrder, categories }) => {
     };
 
     return (
-        <section className='h-full min-w-96 bg-pink-50 p-8'>
+        <section className='h-full w-full min-w-96 bg-pink-50 p-8 flex flex-col'>
             <h1 className="text-2xl text-center"><strong>Order</strong></h1>
             {order.length > 0 ? (
-                <div>
+                <div className="flex flex-col flex-1 overflow-hidden">
                     <div className="mb-4 text-lg text-right">
                         <div><strong>Order Number:</strong> {orderNumber}</div>
                         {orderDate && <div><strong>Order Date:</strong> {orderDate}</div>}
                     </div>
-                    {order.map((dish, index) => (
-                        <OrderLine 
-                            key={dish.id} 
-                            dish={dish} 
-                            increaseQuantity={increaseQuantity} 
-                            decreaseQuantity={decreaseQuantity}
-                            removeDish={removeDish}
-                            index={index}
-                        />
-                    ))}
+                    <div className="flex-1 overflow-y-auto">
+                        {order.map((dish, index) => (
+                            <OrderLine 
+                                key={dish.id} 
+                                dish={dish} 
+                                increaseQuantity={increaseQuantity} 
+                                decreaseQuantity={decreaseQuantity}
+                                removeDish={removeDish}
+                                index={index}
+                            />
+                        ))}
+                    </div>
                     <OrderSummary order={order} categories={categories} />
                     <div className="mt-4 text-right">
                         <button 

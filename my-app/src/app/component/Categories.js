@@ -7,7 +7,7 @@ const Categories = ({ categories, activeCategory, setActiveCategory }) => {
     };
 
     return (
-        <section className='h-full min-w-96 bg-pink-50 p-8'>
+        <section className='h-full w-full min-w-96 bg-pink-50 p-8'>
             <ul className='grid grid-cols-2 h-full gap-3'>
                 {categories.map((category, index) => (
                     <li 
