@@ -1,8 +1,10 @@
 import { memo } from 'react';
+import { useApp } from '../../../context/AppContext';
 
 const backgroundColors = ['bg-[#80ADD7]', 'bg-[#0ABDA0]', 'bg-[#EBF2EA]', 'bg-[#D4DCA9]', 'bg-[#BF9D7A]', 'bg-[#F3D4A0]', 'bg-[#D8D583]'];
 
-const Categories = ({ categories, activeCategory, setActiveCategory }) => {
+const Categories = () => {
+    const { categories, activeCategory, setActiveCategory } = useApp();
 
     const handleCategoryClick = (category) => {
         setActiveCategory(category === activeCategory ? null : category); 

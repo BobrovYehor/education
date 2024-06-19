@@ -1,45 +1,10 @@
-import { memo, useState, useEffect } from "react";
+import { memo } from "react";
+import { useApp } from "../../../context/AppContext";
 import OrderLine from "./OrderLine";
 import OrderSummary from "./OrderSummary";
 
-const Order = ({ order, setOrder, categories }) => {
-    const [orderNumber, setOrderNumber] = useState(1);
-    const [orderDate, setOrderDate] = useState('');
-
-    useEffect(() => {
-        setOrderDate(new Date().toLocaleString());
-    }, []);
-
-    const handleOrderSubmit = () => {
-        setOrderNumber(orderNumber + 1);
-        setOrderDate(new Date().toLocaleString());
-        setOrder([]);
-        alert(`Order ${orderNumber} has been submitted!`);
-    };
-
-    const increaseQuantity = (dishId) => {
-        setOrder(prevOrder => 
-            prevOrder.map(dish => 
-                dish.id === dishId ? { ...dish, quantity: dish.quantity + 1 } : dish
-            )
-        );
-    };
-
-    const decreaseQuantity = (dishId) => {
-        setOrder(prevOrder => {
-            const updatedOrder = prevOrder.map(dish => 
-                dish.id === dishId && dish.quantity > 1 
-                    ? { ...dish, quantity: dish.quantity - 1 } 
-                    : dish
-            );
-            const isOrderChanged = prevOrder.some((dish, index) => dish !== updatedOrder[index]);
-            return isOrderChanged ? updatedOrder : prevOrder;
-        });
-    };
-
-    const removeDish = (dishId) => {
-        setOrder(prevOrder => prevOrder.filter(dish => dish.id !== dishId));
-    };
+const Order = () => {
+    const { order, orderNumber, orderDate, handleOrderSubmit, categories } = useApp();
 
     return (
         <section className='md:h-full flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8 flex flex-col '>
@@ -55,14 +20,11 @@ const Order = ({ order, setOrder, categories }) => {
                             <OrderLine 
                                 key={dish.id} 
                                 dish={dish} 
-                                increaseQuantity={increaseQuantity} 
-                                decreaseQuantity={decreaseQuantity}
-                                removeDish={removeDish}
                                 index={index}
                             />
                         ))}
                     </div>
-                    <OrderSummary order={order} categories={categories} />
+                    <OrderSummary />
                     <div className="mt-4 text-right">
                         <button 
                             onClick={handleOrderSubmit}

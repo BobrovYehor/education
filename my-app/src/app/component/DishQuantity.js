@@ -1,11 +1,14 @@
 import { memo } from 'react';
+import { useApp } from '../../../context/AppContext';
 
-const DishQuantity = ({ dish, increaseQuantity, decreaseQuantity }) => {
+const DishQuantity = ({ dish }) => {
+    const { increaseQuantity, decreaseQuantity } = useApp();
+
     return (
         <div className="flex items-center">
-            <button onClick={decreaseQuantity} className="px-2">-</button>
+            <button onClick={() => decreaseQuantity(dish.id)} className="px-2">-</button>
             <span className="mx-2">{dish.quantity}</span>
-            <button onClick={increaseQuantity} className="px-2">+</button>
+            <button onClick={() => increaseQuantity(dish.id)} className="px-2">+</button>
         </div>
     );
 };
