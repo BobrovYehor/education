@@ -1,11 +1,10 @@
 'use client';
 import { createContext, useContext, useState, useEffect } from "react";
-import dishes from "../services/dishes";
-import categories from "../services/categories";
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
+    const [categories, setCategories] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null);
     const [filteredDishes, setFilteredDishes] = useState([]);
     const [order, setOrder] = useState([]);  
@@ -13,12 +12,33 @@ export const AppProvider = ({ children }) => {
     const [orderDate, setOrderDate] = useState('');
 
     useEffect(() => {
-        if(activeCategory) {
-          const filtered = dishes.filter(dish => dish.category_id === activeCategory.id);
-          setFilteredDishes(filtered);  
-        } else {
-            setFilteredDishes([]);
-        }
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('https://dummyjson.com/recipes/tags');
+                const data = await response.json();
+                setCategories(data);
+            } catch (error) {
+                console.error('Ошибка загрузки категорий:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        const fetchDishes = async () => {
+            if (activeCategory) {
+                try {
+                    const response = await fetch(`https://dummyjson.com/recipes/tag/${activeCategory}`);
+                    const data = await response.json();
+                    setFilteredDishes(data.recipes);  
+                } catch (error) {
+                    console.error('Ошибка загрузки блюд:', error);
+                }
+            } else {
+                setFilteredDishes([]);
+            }
+        };
+        fetchDishes();
     }, [activeCategory]);
 
     useEffect(() => {

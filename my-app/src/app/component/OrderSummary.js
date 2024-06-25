@@ -5,15 +5,15 @@ const OrderSummary = () => {
     const { order, categories } = useApp();
 
     const calculateTotal = useMemo(() => {
-        return order.reduce((total, dish) => total + dish.price * dish.quantity, 0);
+        return order.reduce((total, dish) => total + dish.reviewCount * dish.quantity, 0);
     }, [order]);
 
     const calculateCategoryTotal = useMemo(() => {
         return categories.map(category => {
             const categoryTotal = order
-                .filter(dish => dish.category_id === category.id)
-                .reduce((total, dish) => total + dish.price * dish.quantity, 0);
-            return { ...category, total: categoryTotal };
+                .filter(dish => dish.tags.includes(category))
+                .reduce((total, dish) => total + dish.reviewCount * dish.quantity, 0);
+            return { name: category, total: categoryTotal };
         }).filter(category => category.total > 0);
     }, [order, categories]);
 
@@ -22,8 +22,8 @@ const OrderSummary = () => {
             <h2 className="text-2xl text-center"><strong>Order Summary</strong></h2>
             <ul className="mt-4">
                 {calculateCategoryTotal.map(category => (
-                    <li key={category.id} className="text-lg">
-                        <strong>{category.title}:</strong> ${category.total.toFixed(2)}
+                    <li key={category.name} className="text-lg">
+                        <strong>{category.name}:</strong> ${category.total.toFixed(2)}
                     </li>
                 ))}
             </ul>

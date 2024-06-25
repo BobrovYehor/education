@@ -13,7 +13,7 @@ const Dishes = () => {
                             key={dish.id} 
                             className='flex justify-center items-center text-xl h-36 cursor-pointer bg-pink-200'
                             onClick={() => addDishToOrder(dish)}>
-                            {dish.title}
+                            {dish.name}
                         </li>
                     ))}
                 </ul>

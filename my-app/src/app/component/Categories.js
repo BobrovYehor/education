@@ -7,19 +7,19 @@ const Categories = () => {
     const { categories, activeCategory, setActiveCategory } = useApp();
 
     const handleCategoryClick = (category) => {
-        setActiveCategory(category === activeCategory ? null : category); 
+        setActiveCategory(category === activeCategory ? null : category);
     };
 
     return (
-        <section className=' flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8'>
+        <section className='flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8'>
             <ul className='grid grid-cols-2 h-full gap-3'>
-                {categories.map((category, index) => (
-                    <li 
-                        key={category.id} 
+                {categories.length > 0 && categories.map((category, index) => (
+                    <li
+                        key={category}
                         className={`flex justify-center items-center text-xl h-36 cursor-pointer border-2 ${backgroundColors[index % backgroundColors.length]} ${activeCategory === category ? 'border-black' : 'border-transparent'}`}
                         onClick={() => handleCategoryClick(category)}
                     >
-                        {category.title}
+                        {category}
                     </li>
                 ))}
             </ul>
