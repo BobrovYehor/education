@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 
 const AppContext = createContext();
 
@@ -73,7 +73,7 @@ export const AppProvider = ({ children }) => {
         setOrderDate(new Date().toLocaleString());
     }, []);
 
-    const addDishToOrder = (dish) => {
+    const addDishToOrder = useCallback((dish) => {
         setOrder(prevOrder => {
             const existingDish = prevOrder.find(item => item.id === dish.id);
             if (existingDish) {
@@ -86,17 +86,17 @@ export const AppProvider = ({ children }) => {
                 return [...prevOrder, { ...dish, quantity: 1 }];
             }
         });
-    };
+    }, []);
 
-    const increaseQuantity = (dishId) => {
+    const increaseQuantity = useCallback((dishId) => {
         setOrder(prevOrder => 
             prevOrder.map(dish => 
                 dish.id === dishId ? { ...dish, quantity: dish.quantity + 1 } : dish
             )
         );
-    };
+    }, []);
 
-    const decreaseQuantity = (dishId) => {
+    const decreaseQuantity = useCallback((dishId) => {
         setOrder(prevOrder => {
             const updatedOrder = prevOrder.map(dish => 
                 dish.id === dishId && dish.quantity > 1 
@@ -106,34 +106,48 @@ export const AppProvider = ({ children }) => {
             const isOrderChanged = prevOrder.some((dish, index) => dish !== updatedOrder[index]);
             return isOrderChanged ? updatedOrder : prevOrder;
         });
-    };
+    }, []);
 
-    const removeDish = (dishId) => {
+    const removeDish = useCallback((dishId) => {
         setOrder(prevOrder => prevOrder.filter(dish => dish.id !== dishId));
-    };
+    }, []);
 
-    const handleOrderSubmit = () => {
+    const handleOrderSubmit = useCallback(() => {
         setOrderNumber(orderNumber + 1);
         setOrderDate(new Date().toLocaleString());
         setOrder([]);
         alert(`Order ${orderNumber} has been submitted!`);
-    };
+    }, [orderNumber]);
+
+    const contextValue = useMemo(() => ({
+        activeCategory,
+        setActiveCategory,
+        filteredDishes,
+        order,
+        addDishToOrder,
+        increaseQuantity,
+        decreaseQuantity,
+        removeDish,
+        orderNumber,
+        orderDate,
+        handleOrderSubmit,
+        categories
+    }), [
+        activeCategory,
+        filteredDishes,
+        order,
+        addDishToOrder,
+        increaseQuantity,
+        decreaseQuantity,
+        removeDish,
+        orderNumber,
+        orderDate,
+        handleOrderSubmit,
+        categories
+    ]);
 
     return (
-        <AppContext.Provider value={{
-            activeCategory,
-            setActiveCategory,
-            filteredDishes,
-            order,
-            addDishToOrder,
-            increaseQuantity,
-            decreaseQuantity,
-            removeDish,
-            orderNumber,
-            orderDate,
-            handleOrderSubmit,
-            categories
-        }}>
+        <AppContext.Provider value={contextValue}>
             {children}
         </AppContext.Provider>
     );

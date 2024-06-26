@@ -3,7 +3,11 @@ import { useApp } from '../../../context/AppContext';
 
 const Dishes = () => {
     const { filteredDishes, addDishToOrder } = useApp();
-    console.log('Dishes rendered');
+    return <DishesList filteredDishes={filteredDishes} addDishToOrder={addDishToOrder} />;
+}
+
+const DishesList = memo(({ filteredDishes, addDishToOrder }) => {    
+    // console.log('Dishes rendered');
     return (
         <section className='flex-1 min-w-80 sm:min-w-96 bg-fuchsia-300 p-4 md:p-8'>
             {filteredDishes.length > 0 ? (
@@ -22,6 +26,6 @@ const Dishes = () => {
             )}
         </section>
     );
-}
+});
 
-export default memo(Dishes);
+export default Dishes;

@@ -5,7 +5,11 @@ const backgroundColors = ['bg-[#80ADD7]', 'bg-[#0ABDA0]', 'bg-[#EBF2EA]', 'bg-[#
 
 const Categories = () => {
     const { categories, activeCategory, setActiveCategory } = useApp();
+    return <CategoriesList categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory} />;
+}
 
+const CategoriesList = memo(({ categories, activeCategory, setActiveCategory }) => {
+    // console.log('Categories rendered');
     const handleCategoryClick = (category) => {
         setActiveCategory(category === activeCategory ? null : category);
     };
@@ -25,6 +29,6 @@ const Categories = () => {
             </ul>
         </section>
     );
-}
+});
 
-export default memo(Categories);
+export default Categories;

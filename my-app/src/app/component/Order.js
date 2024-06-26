@@ -4,8 +4,12 @@ import OrderLine from "./OrderLine";
 import OrderSummary from "./OrderSummary";
 
 const Order = () => {
-    const { order, orderNumber, orderDate, handleOrderSubmit, categories } = useApp();
+    const { order, orderNumber, orderDate, handleOrderSubmit } = useApp();
+    return <OrderList order={order} orderNumber={orderNumber} orderDate={orderDate} handleOrderSubmit={handleOrderSubmit} />;
+}
 
+const OrderList = memo(({ order, orderNumber, orderDate, handleOrderSubmit }) => {
+    // console.log('Order rendered');
     return (
         <section className='flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8 flex flex-col'>
             <h1 className="text-2xl text-center"><strong>Order</strong></h1>
@@ -38,6 +42,6 @@ const Order = () => {
             )}
         </section>
     )
-}
+});
 
-export default memo(Order);
+export default Order;
