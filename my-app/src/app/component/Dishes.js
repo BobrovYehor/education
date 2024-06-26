@@ -7,7 +7,7 @@ const Dishes = () => {
     return (
         <section className='flex-1 min-w-80 sm:min-w-96 bg-fuchsia-300 p-4 md:p-8'>
             {filteredDishes.length > 0 ? (
-                <ul className='grid grid-cols-2 grid-rows-4 h-full gap-3 text-center'>
+                <ul className='grid grid-cols-2 gap-3 text-center'>
                     {filteredDishes.map((dish) => (
                         <li 
                             key={dish.id} 

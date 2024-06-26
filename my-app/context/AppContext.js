@@ -7,16 +7,49 @@ export const AppProvider = ({ children }) => {
     const [categories, setCategories] = useState([]);
     const [activeCategory, setActiveCategory] = useState(null);
     const [filteredDishes, setFilteredDishes] = useState([]);
-    const [order, setOrder] = useState([]);  
+    const [order, setOrder] = useState([]);
     const [orderNumber, setOrderNumber] = useState(1);
     const [orderDate, setOrderDate] = useState('');
+    const [recipes, setRecipes] = useState([]);
+
+    const calculateCategoryCounts = (recipes) => {
+        const categoryCounts = {};
+        recipes.forEach(recipe => {
+            recipe.tags.forEach(tag => {
+                if (categoryCounts[tag]) {
+                    categoryCounts[tag]++;
+                } else {
+                    categoryCounts[tag] = 1;
+                }
+            });
+        });
+        return categoryCounts;
+    };
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('https://dummyjson.com/recipes/tags');
+                const response = await fetch('https://dummyjson.com/recipes');
                 const data = await response.json();
-                setCategories(data);
+                const categoryCounts = calculateCategoryCounts(data.recipes);
+                
+                const uniqueCategories = new Set();
+                const optimizedRecipes = data.recipes.map(recipe => {
+                    if (recipe.tags && recipe.tags.length > 0) {
+                        const optimalCategory = recipe.tags.reduce((maxCategory, currentCategory) => 
+                            categoryCounts[currentCategory] > (categoryCounts[maxCategory] || 0) 
+                                ? currentCategory 
+                                : maxCategory, 
+                        recipe.tags[0]);
+
+                        uniqueCategories.add(optimalCategory);
+                        return { ...recipe, optimalCategory };
+                    }
+                    return recipe;
+                });
+
+                setCategories(Array.from(uniqueCategories));
+                setRecipes(optimizedRecipes);
             } catch (error) {
                 console.error('Ошибка загрузки категорий:', error);
             }
@@ -27,19 +60,14 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         const fetchDishes = async () => {
             if (activeCategory) {
-                try {
-                    const response = await fetch(`https://dummyjson.com/recipes/tag/${activeCategory}`);
-                    const data = await response.json();
-                    setFilteredDishes(data.recipes);  
-                } catch (error) {
-                    console.error('Ошибка загрузки блюд:', error);
-                }
+                const filteredRecipes = recipes.filter(recipe => recipe.optimalCategory === activeCategory);
+                setFilteredDishes(filteredRecipes);
             } else {
                 setFilteredDishes([]);
             }
         };
         fetchDishes();
-    }, [activeCategory]);
+    }, [activeCategory, recipes]);
 
     useEffect(() => {
         setOrderDate(new Date().toLocaleString());
@@ -91,8 +119,8 @@ export const AppProvider = ({ children }) => {
         alert(`Order ${orderNumber} has been submitted!`);
     };
 
-    return(
-        <AppContext.Provider value= {{
+    return (
+        <AppContext.Provider value={{
             activeCategory,
             setActiveCategory,
             filteredDishes,

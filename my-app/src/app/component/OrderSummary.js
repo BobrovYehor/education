@@ -1,18 +1,19 @@
 import { memo, useMemo } from 'react';
 import { useApp } from '../../../context/AppContext';
+import prices from '../../../services/prices.json'
 
 const OrderSummary = () => {
     const { order, categories } = useApp();
 
     const calculateTotal = useMemo(() => {
-        return order.reduce((total, dish) => total + dish.reviewCount * dish.quantity, 0);
+        return order.reduce((total, dish) => total + prices[dish.id] * dish.quantity, 0);
     }, [order]);
 
     const calculateCategoryTotal = useMemo(() => {
         return categories.map(category => {
             const categoryTotal = order
                 .filter(dish => dish.tags.includes(category))
-                .reduce((total, dish) => total + dish.reviewCount * dish.quantity, 0);
+                .reduce((total, dish) => total + prices[dish.id] * dish.quantity, 0);
             return { name: category, total: categoryTotal };
         }).filter(category => category.total > 0);
     }, [order, categories]);

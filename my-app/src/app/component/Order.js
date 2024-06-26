@@ -7,7 +7,7 @@ const Order = () => {
     const { order, orderNumber, orderDate, handleOrderSubmit, categories } = useApp();
 
     return (
-        <section className='md:h-full flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8 flex flex-col '>
+        <section className='flex-1 min-w-80 sm:min-w-96 bg-pink-50 p-4 md:p-8 flex flex-col'>
             <h1 className="text-2xl text-center"><strong>Order</strong></h1>
             {order.length > 0 ? (
                 <div className="flex flex-col overflow-hidden">
@@ -15,7 +15,7 @@ const Order = () => {
                         <div><strong>Order Number:</strong> {orderNumber}</div>
                         {orderDate && <div><strong>Order Date:</strong> {orderDate}</div>}
                     </div>
-                    <div className="overflow-y-auto">
+                    <div className="overflow-y-auto h-96">
                         {order.map((dish, index) => (
                             <OrderLine 
                                 key={dish.id} 
