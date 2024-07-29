@@ -9,9 +9,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import { ThemeProvider } from "@mui/material/styles";
 
-import { dataProvider } from "./providers/data-provider";
-import { ListProducts } from "./pages/list";
+import { ProductDataProvider } from "./providers/product-data-provider";
+import { OrderDataProvider } from "./providers/order-data-provider";
+import { ListProducts } from "./pages/listProduct";
 import { ListOrders } from "./pages/orderList";
+import { ProductDetails } from "./pages/productDetails";
 
 export default function App(): JSX.Element {
   return (
@@ -20,18 +22,28 @@ export default function App(): JSX.Element {
         <CssBaseline />
         <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
         <Refine
-          dataProvider={dataProvider}
+          dataProvider={{
+            default: ProductDataProvider,
+            productProvider: ProductDataProvider,
+            orderProvider: OrderDataProvider,
+          }}
           routerProvider={routerProvider}
           resources={[
             {
               name: "products",
               list: "/products",
-              meta: { label: "Products" },
+              meta: { 
+                label: "Products",
+                dataProviderName: "productProvider"
+               },
             },
             {
               name: "orders",
               list: "/orders",
-              meta: { label: "Orders" },
+              meta: { 
+                label: "Orders",
+                dataProviderName: "orderProvider"
+               },
             },
           ]}
         >
@@ -52,6 +64,7 @@ export default function App(): JSX.Element {
                 element={<NavigateToResource resource="products" />} 
               />
               <Route path="/products" element={<ListProducts />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/orders" element={<ListOrders />} />
             </Route>
           </Routes>

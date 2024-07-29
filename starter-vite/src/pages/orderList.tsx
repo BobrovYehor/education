@@ -1,30 +1,26 @@
-import { useEffect, useState } from "react";
+import { useTable } from "@refinedev/core";
 import { Modal, Box, Typography, Button } from "@mui/material";
-
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
+import { useState } from "react";
 
 export const ListOrders = () => {
-    const [orders, setOrders] = useState<any[]>([]);
+    const {
+        tableQueryResult: { data: ordersData, isLoading: ordersLoading },
+    } = useTable({
+        resource: "orders",
+        pagination: { current: 1, pageSize: 10 },
+    });
+
+    const {
+        tableQueryResult: { data: productsData, isLoading: productsLoading },
+    } = useTable({
+        resource: "products",
+    });
+
     const [open, setOpen] = useState<boolean>(false);
     const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
-    useEffect(() => {
-        const storedOrders = localStorage.getItem("orders");
-        const orders = storedOrders ? JSON.parse(storedOrders) : [];
-        setOrders(orders);
-    }, []);
-
-    const handleOpen = (order: any) => {
+    const handleOpen = (id: any) => {
+        const order = ordersData?.data.find((order: any) => order.id === id);
         setSelectedOrder(order);
         setOpen(true);
     };
@@ -34,62 +30,79 @@ export const ListOrders = () => {
         setSelectedOrder(null);
     };
 
+    if (ordersLoading || productsLoading) {
+        return <Typography variant="h6">Loading...</Typography>;
+    }
+
+    const productsMap = productsData?.data.reduce((acc: any, product: any) => {
+        acc[product.id] = product;
+        return acc;
+    }, {});
+
     return (
-        <div>
-            <h1>Orders</h1>
-            <table style={{ width: '100%', textAlign: 'center' }}>
+        <div className="p-4">
+            <h1 className="text-2xl font-bold mb-4">Orders</h1>
+            <table className="w-full border-collapse text-center">
                 <thead>
                     <tr>
-                        <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>ID</th>
-                        <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>Name</th>
-                        <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>Date</th>
-                        <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}></th>
+                        <th className="border-b-2 border-gray-300 p-2">ID</th>
+                        <th className="border-b-2 border-gray-300 p-2">Name</th>
+                        <th className="border-b-2 border-gray-300 p-2">Date</th>
+                        <th className="border-b-2 border-gray-300 p-2"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.map((order: any) => (
+                    {ordersData?.data.map((order: any) => (
                         <tr key={order.id}>
-                            <td style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>{order.id}</td>
-                            <td style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>{order.name}</td>
-                            <td style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>{order.date}</td>
-                            <td style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>
-                                <Button variant="outlined" onClick={() => handleOpen(order)}>More info</Button>
+                            <td className="border-b border-gray-300 p-2">{order.id}</td>
+                            <td className="border-b border-gray-300 p-2">{order.name}</td>
+                            <td className="border-b border-gray-300 p-2">{new Date(order.createdAt).toLocaleDateString()}</td>
+                            <td className="border-b border-gray-300 p-2">
+                                <Button variant="outlined" onClick={() => handleOpen(order.id)}>More info</Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <Modal
-                open={open}
-                onClose={handleClose}
-            >
-                <Box sx={style}>
-                    <h2>Order details</h2>
+            <Modal open={open} onClose={handleClose}>
+                <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] bg-white border border-black shadow-lg p-4">
+                    <h2 className="text-xl font-semibold mb-4">Order Details</h2>
                     {selectedOrder && (
                         <>
-                            <Typography sx={{ mt: 2 }}>
+                            <Typography className="mt-2">
                                 <b>ID:</b> {selectedOrder.id}
                             </Typography>
-                            <Typography sx={{ mt: 2 }}>
+                            <Typography className="mt-2">
                                 <b>Name:</b> {selectedOrder.name}
                             </Typography>
-                            <Typography sx={{ mt: 2 }}>
-                                <b>Date:</b> {selectedOrder.date}
+                            <Typography className="mt-2">
+                                <b>Date:</b> {new Date(selectedOrder.createdAt).toLocaleDateString()}
                             </Typography>
-                            <Typography sx={{ mt: 2 }}>
+                            <Typography className="mt-2">
                                 <b>Products:</b>
-                                <ul>
-                                    {selectedOrder.products.map((product: any) => (
-                                        <li key={product.id}>
-                                            {product.name} (Quantity: {product.quantity})
-                                        </li>
-                                    ))}
-                                </ul>
                             </Typography>
+                            <table className="w-full mt-2 border-collapse mb-4">
+                                <thead>
+                                    <tr>
+                                        <th className="border-b-2 border-gray-300 p-2">Product ID</th>
+                                        <th className="border-b-2 border-gray-300 p-2">Product Name</th>
+                                        <th className="border-b-2 border-gray-300 p-2">Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {selectedOrder.lineItem.map((item: any) => (
+                                        <tr key={item.id}>
+                                            <td className="border-b border-gray-300 p-2 text-center">{item.product_id}</td>
+                                            <td className="border-b border-gray-300 p-2 text-center">{productsMap[item.product_id]?.name}</td>
+                                            <td className="border-b border-gray-300 p-2 text-center">{item.quantity}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </>
                     )}
-                    <Button variant="outlined" onClick={handleClose} sx={{ mt: 2 }}>
+                    <Button variant="outlined" onClick={handleClose}>
                         Close
                     </Button>
                 </Box>
