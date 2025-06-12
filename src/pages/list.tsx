@@ -1,6 +1,41 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useTable } from "@refinedev/core";
 import { Box, Button, Typography } from "@mui/material";
+
+interface Product {
+    id: string;
+    name: string;
+    material: string;
+    price: number;
+}
+
+interface SelectedProduct {
+    id: string;
+    name: string;
+    quantity: number;
+}
+
+interface Order {
+    id: string;
+    name: string;
+    date: string;
+    products: SelectedProduct[];
+}
+
+const tableStyles = {
+    width: '100%',
+    borderCollapse: 'collapse' as const
+};
+
+const cellStyles = {
+    padding: '8px',
+    borderBottom: '1px solid #ddd'
+};
+
+const headerCellStyles = {
+    borderBottom: '2px solid #ddd',
+    padding: '8px'
+};
 
 export const ListProducts = () => {
     const {
@@ -12,11 +47,9 @@ export const ListProducts = () => {
         pagination: { current: 1, pageSize: 10 },
     });
 
-    const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
+    const [selectedProductsMap, setSelectedProductsMap] = useState<Map<string, SelectedProduct>>(new Map());
 
-    if (isLoading) {
-        return <Typography variant="h6">Loading...</Typography>;
-    }
+    const selectedProducts = useMemo(() => Array.from(selectedProductsMap.values()), [selectedProductsMap]);
 
     const onPrevious = () => {
         if (current > 1) {
@@ -34,20 +67,29 @@ export const ListProducts = () => {
         setCurrent(page);
     };
 
-    const handleAddProduct = (product: any) => {
-        setSelectedProducts((prevSelectedProducts: any[]) => {
-            const existingProduct = prevSelectedProducts.find((p: any) => p.id === product.id);
+    const handleAddProduct = useCallback((product: Product) => {
+        setSelectedProductsMap(prevMap => {
+            const newMap = new Map(prevMap);
+            const existingProduct = newMap.get(product.id);
+            
             if (existingProduct) {
-                return prevSelectedProducts.map((p: any) =>
-                    p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
-                );
+                newMap.set(product.id, {
+                    ...existingProduct,
+                    quantity: existingProduct.quantity + 1
+                });
             } else {
-                return [...prevSelectedProducts, { id: product.id, name: product.name, quantity: 1 }];
+                newMap.set(product.id, {
+                    id: product.id,
+                    name: product.name,
+                    quantity: 1
+                });
             }
+            
+            return newMap;
         });
-    };
+    }, []);
 
-    const handleSaveOrder = () => {
+    const handleSaveOrder = useCallback(() => {
         const orderNumber = `#${1010 + Math.floor(Math.random() * 1000)}`;
         const orderDate = new Date().toLocaleString('en-US', {
             year: 'numeric',
@@ -67,12 +109,19 @@ export const ListProducts = () => {
             products: selectedProducts,
         };
 
-        const orders: any[] = JSON.parse(localStorage.getItem("orders") || "[]");
-        orders.push(order);
-        localStorage.setItem("orders", JSON.stringify(orders));
+        try {
+            const orders: Order[] = JSON.parse(localStorage.getItem("orders") || "[]");
+            orders.push(order);
+            localStorage.setItem("orders", JSON.stringify(orders));
+            setSelectedProductsMap(new Map());
+        } catch (error) {
+            console.error("Failed to save order to localStorage:", error);
+        }
+    }, [selectedProducts]);
 
-        setSelectedProducts([]);
-    };
+    if (isLoading) {
+        return <Typography variant="h6">Loading...</Typography>;
+    }
 
     return (
         <Box sx={{ padding: 3 }}>
@@ -80,25 +129,25 @@ export const ListProducts = () => {
                 Products
             </Typography>
             <Box sx={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table style={tableStyles}>
                     <thead>
                         <tr>
-                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>ID</th>
-                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>Name</th>
-                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>Material</th>
-                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}>Price</th>
-                            <th style={{ borderBottom: '2px solid #ddd', padding: '8px' }}></th>
+                            <th style={headerCellStyles}>ID</th>
+                            <th style={headerCellStyles}>Name</th>
+                            <th style={headerCellStyles}>Material</th>
+                            <th style={headerCellStyles}>Price</th>
+                            <th style={headerCellStyles}></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {data?.data?.map((product: any) => (
+                        {data?.data?.map((product) => (
                             <tr key={product.id}>
-                                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>{product.id}</td>
-                                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>{product.name}</td>
-                                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>{product.material}</td>
-                                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>{product.price}</td>
-                                <td style={{ padding: '8px', borderBottom: '1px solid #ddd' }}>
-                                    <Button variant="contained" color="primary" onClick={() => handleAddProduct(product)}>
+                                <td style={cellStyles}>{product.id}</td>
+                                <td style={cellStyles}>{product.name}</td>
+                                <td style={cellStyles}>{product.material}</td>
+                                <td style={cellStyles}>{product.price}</td>
+                                <td style={cellStyles}>
+                                    <Button variant="contained" color="primary" onClick={() => handleAddProduct(product as Product)}>
                                         Add to order
                                     </Button>
                                 </td>
@@ -128,7 +177,7 @@ export const ListProducts = () => {
                 <Box sx={{ marginTop: 3 }}>
                     <Typography variant="h6">Selected Products</Typography>
                     <ul>
-                        {selectedProducts.map((product: any) => (
+                        {selectedProducts.map((product: SelectedProduct) => (
                             <li key={product.id}>{product.name} - {product.quantity}</li>
                         ))}
                     </ul>

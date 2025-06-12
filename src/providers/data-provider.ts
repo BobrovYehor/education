@@ -3,12 +3,12 @@ import type { DataProvider } from "@refinedev/core";
 const API_URL = "https://api.fake-rest.refine.dev";
 
 export const dataProvider: DataProvider = {
-    getList: async ({ resource, pagination, filters, sorters, meta }) => {
+    getList: async ({ resource, pagination, filters, sorters }) => {
         const params = new URLSearchParams();
 
-        if (pagination) {
-            params.append("_start", (pagination.current - 1) * pagination.pageSize);
-            params.append("_end", pagination.current * pagination.pageSize);
+        if (pagination && pagination.current && pagination.pageSize) {
+            params.append("_start", String((pagination.current - 1) * pagination.pageSize));
+            params.append("_end", String(pagination.current * pagination.pageSize));
         }
 
         if (sorters && sorters.length > 0) {
@@ -37,11 +37,11 @@ export const dataProvider: DataProvider = {
             total,
         };
     },
-    getMany: async ({ resource, ids, meta }) => {
+    getMany: async ({ resource, ids }) => {
         const params = new URLSearchParams();
 
         if (ids) {
-            ids.forEach((id) => params.append("id", id));
+            ids.forEach((id) => params.append("id", String(id)));
         }
 
         const response = await fetch(`${API_URL}/${resource}?${params.toString()}`);
@@ -52,7 +52,7 @@ export const dataProvider: DataProvider = {
 
         return { data };
     },
-    getOne: async ({ resource, id, meta }) => {
+    getOne: async ({ resource, id }) => {
         const response = await fetch(`${API_URL}/${resource}/${id}`);
 
         if (response.status < 200 || response.status > 299) throw response;
